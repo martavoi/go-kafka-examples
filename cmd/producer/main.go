@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	kafkago "go-kafka-examples/internal/kafka-batch-producer"
+	"go-kafka-examples/internal/kafkabatch"
 	"go-kafka-examples/internal/sample"
 	"os"
 	"os/signal"
@@ -20,11 +20,12 @@ func main() {
 	topic := "sample.1"
 	server := "localhost"
 
-	p, err := kafkago.NewBulkProducer(&kafka.ConfigMap{"bootstrap.servers": server})
+	p, err := kafkabatch.NewBulkProducer(&kafka.ConfigMap{"bootstrap.servers": server})
 	if err != nil {
 		fmt.Printf("Error upon producer creation: %v", err)
 		os.Exit(1)
 	}
+	defer p.Close()
 
 	sysCh := make(chan os.Signal, 1)
 	signal.Notify(sysCh, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
